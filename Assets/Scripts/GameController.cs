@@ -72,10 +72,22 @@ public class GameController : MonoBehaviour
     public Button GamesettingsButton;
 
     /// <summary>
+    ///     MaxScore required to win the game
+    /// </summary>
+    [Tooltip("MaxScore required to win the game")]
+    [SerializeField]
+    public int MaxScore = 3;
+
+    /// <summary>
     ///     Scores for both players, index 1 is player 1 (right), index 2 is player 2 (left) and so on
     /// </summary>
     [HideInInspector]
-    public int[] Score ;
+    public int[] Score;
+
+    /// <summary>
+    /// Is one of the player winner;
+    /// </summary>
+    private bool _isWin;
 
     void Awake()
     {
@@ -94,6 +106,14 @@ public class GameController : MonoBehaviour
                 GamesettingsButton.GetComponentInChildren<TextMeshProUGUI>().text = "Physics based";
             }
         });
+    }
+
+    void Update()
+    {
+        if (_isWin && Input.GetKeyDown(KeyCode.Space))
+        {
+            GoToMenu();
+        }
     }
 
     /// <summary>
@@ -124,11 +144,11 @@ public class GameController : MonoBehaviour
     private void UpdateScore()
     {
         Scoreboard.text = Score[1] + " - " + Score[0];
-        if(Score[1] > 10)
+        if(Score[1] > MaxScore)
         {
             WinGame(2);
         }
-        else if(Score[0] > 10)
+        else if(Score[0] > MaxScore)
         {
             WinGame(1);
         }
@@ -136,13 +156,10 @@ public class GameController : MonoBehaviour
 
     private void WinGame(int player)
     {
+        _isWin = true;
         WinText.gameObject.SetActive(true);
         WinText.text = "Player " + player + " win! Press space to enter menu.";
         BallGameObject.SetActive(false);
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            GoToMenu();
-        }
     }
 
     /// <summary>
